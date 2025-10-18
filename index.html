@@ -4,51 +4,284 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>🎤 カラオケ配信チェッカー</title>
-  <link rel="stylesheet" href="style.css" />
+  <meta name="description" content="曲名を入れるだけでDAM/JOYSOUNDを横断検索。ロゴタップで一発ジャンプ。履歴・お気に入り付き。">
+  <style>
+    :root{
+      --bg:#0b1020; --card:#131a2d; --muted:#8aa0c6; --txt:#e8eeff; --accent:#6ea8ff; --accent2:#a6ffb1;
+      --glow: 0 10px 30px rgba(0, 128, 255, .20), inset 0 0 0 1px rgba(110,168,255,.15);
+    }
+    *{box-sizing:border-box}
+    html,body{margin:0;background:radial-gradient(1000px 500px at 10% -10%,#12214a,#0b1020 50%),linear-gradient(180deg,#0b1020 0%,#0f1530 100%);color:var(--txt);font-family:system-ui,-apple-system,Segoe UI,Roboto,"Hiragino Kaku Gothic ProN","Noto Sans JP",sans-serif}
+    .wrap{max-width:980px;margin:0 auto;padding:28px 16px 80px}
+
+    /* header */
+    header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:16px}
+    .logo{display:flex;align-items:center;gap:10px}
+    .logo .dot{width:10px;height:10px;border-radius:50%;background:radial-gradient(circle,var(--accent) 0%,#2b61ff 60%,transparent 70%);box-shadow:0 0 12px #6ea8ff}
+    h1{font-size:22px;margin:0;font-weight:800;letter-spacing:.3px}
+    .tiny{padding:8px 10px;border-radius:10px;font-size:12px;cursor:pointer;border:1px solid rgba(110,168,255,.35);background:transparent;color:var(--txt)}
+
+    /* cards */
+    .card{background:rgba(19,26,45,.72);backdrop-filter:blur(6px);border:1px solid rgba(110,168,255,.15);border-radius:18px;box-shadow:var(--glow)}
+    .search{padding:18px}
+
+    /* search row */
+    .row{display:flex;gap:10px}
+    input[type="text"]{flex:1;background:#0f1530;color:var(--txt);border:1px solid rgba(110,168,255,.3);border-radius:12px;padding:14px 16px;font-size:16px;outline:none}
+    input::placeholder{color:#90a2c9}
+    .btn{cursor:pointer;border:none;border-radius:12px;padding:14px 16px;font-weight:700;color:#0a1025;background:linear-gradient(180deg,#88b5ff,#6ea8ff);box-shadow:0 6px 16px rgba(110,168,255,.35);transition:transform .04s ease,opacity .2s}
+    .btn:active{transform:translateY(1px)}
+    .sub{display:flex;gap:10px;margin-top:10px}
+
+    /* brand tiles */
+    .brands{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-top:14px}
+    .tile{display:flex;align-items:center;gap:14px;padding:14px;border-radius:14px;background:#0f1530;border:1px solid rgba(110,168,255,.18);transition:transform .06s ease, box-shadow .2s ease}
+    .tile:hover{transform:translateY(-1px);box-shadow:0 8px 24px rgba(0,0,0,.35)}
+    .tile img{width:120px;max-height:42px;object-fit:contain;filter:drop-shadow(0 0 12px rgba(110,168,255,.15))}
+    .tile .meta{flex:1}
+    .tile .meta .ttl{font-weight:700;font-size:15px;margin:0 0 4px}
+    .tile .meta .desc{color:var(--muted);font-size:12px;margin:0}
+    .tile .go{white-space:nowrap}
+    .tile .go a{display:inline-block;padding:10px 12px;border-radius:10px;background:linear-gradient(180deg,#b9ffc2,#7bff96);color:#042; font-weight:800;text-decoration:none}
+
+    /* linkcards (text fallback) */
+    .grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;padding:16px}
+    .linkcard{padding:16px;border-radius:14px;border:1px solid rgba(110,168,255,.18);background:#0f1530}
+    .linkcard h3{margin:0 0 8px 0;font-size:15px;color:#cfe1ff}
+    .linkcard a{color:var(--accent);word-break:break-all}
+    .muted{color:var(--muted);font-size:13px}
+
+    /* history / fav */
+    .panel{margin-top:16px;padding:14px 16px;border-top:1px dashed rgba(110,168,255,.25)}
+    .cols{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    .list{display:flex;flex-direction:column;gap:8px;max-height:300px;overflow:auto}
+    .pill{display:flex;align-items:center;justify-content:space-between;gap:10px;background:#0f1530;border:1px solid rgba(110,168,255,.18);border-radius:12px;padding:10px 12px}
+    .pill small{color:#b9c9ef}
+    .row2{display:flex;gap:6px}
+    .del{background:transparent;border:1px solid rgba(110,168,255,.3);color:#cfe1ff}
+    .star{background:linear-gradient(180deg,#b9ffc2,#7bff96)}
+    footer{margin-top:18px;color:#8aa0c6;font-size:12px;text-align:center}
+    .ok{color:var(--accent2)}
+
+    /* subtle intro motion */
+    .fadein{animation:fadeIn .6s ease both}
+    @keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+    @media (max-width:780px){
+      .brands{grid-template-columns:1fr}
+      .grid{grid-template-columns:1fr}
+      .row{flex-direction:column}
+      .tile img{width:110px}
+    }
+  </style>
 </head>
 <body>
-  <div class="stars"></div>
-  <div class="twinkling"></div>
+  <div class="wrap">
+    <header>
+      <div class="logo"><span class="dot"></span><h1>カラオケ配信チェッカー</h1></div>
+      <button class="tiny" id="shareBtn" title="このページを共有">共有</button>
+    </header>
 
-  <main class="container fade-in">
-    <h1 class="glow-title">🎵 カラオケ配信チェッカー</h1>
-    <p class="subtitle">曲名を入力して各機種の配信状況をチェック！</p>
+    <section class="card search fadein">
+      <div class="row">
+        <input id="song" type="text" placeholder="曲名を入力（例：新時代 / 残酷な天使のテーゼ）" />
+        <button class="btn" id="goBtn">検索</button>
+      </div>
 
-    <div class="search-card">
-      <input type="text" id="song" placeholder="例：夜に駆ける / 残酷な天使のテーゼ" />
-      <button id="searchBtn">検索</button>
-    </div>
+      <!-- 直感UI：ロゴでジャンプ（入力中の曲名を連動） -->
+      <div class="brands" id="brandTiles">
+        <!-- JSで曲名にあわせてhrefを更新する -->
+        <a class="tile" id="tileDam" href="https://www.clubdam.com/karaokesearch/?keyword=" target="_blank" rel="noopener">
+          <img src="images/dam.png" alt="DAMロゴ" loading="lazy" />
+          <div class="meta">
+            <p class="ttl">DAM 公式検索</p>
+            <p class="desc">本人映像・配信状況は結果画面で確認</p>
+          </div>
+          <div class="go"><span class="btn tiny" style="padding:10px 12px;">開く</span></div>
+        </a>
 
-    <div id="result" class="result-area"></div>
-  </main>
+        <a class="tile" id="tileJoy" href="https://www.joysound.com/web/search?keyword=" target="_blank" rel="noopener">
+          <img src="images/joy.png" alt="JOYSOUNDロゴ" loading="lazy" />
+          <div class="meta">
+            <p class="ttl">JOYSOUND 公式検索</p>
+            <p class="desc">機種・映像の有無は詳細で確認</p>
+          </div>
+          <div class="go"><span class="btn tiny" style="padding:10px 12px;">開く</span></div>
+        </a>
+      </div>
 
-  <footer>
-    <p>© 2025 Kara-Search | 非公式ファン制作ツール</p>
-  </footer>
+      <p class="muted" style="margin-top:10px">
+        曲名を入れて「検索」またはロゴをタップで各公式へジャンプ。<br>
+        <span class="ok">※配信中/未配信の自動判定は今後追加予定。</span>
+      </p>
+    </section>
+
+    <!-- テキスト版のリンクカード（補助） -->
+    <section class="card grid fadein" id="linksArea" aria-live="polite"></section>
+
+    <!-- 履歴・お気に入り -->
+    <section class="card panel fadein">
+      <div class="cols">
+        <div>
+          <h3 style="margin:0 0 8px 0;">🕘 最近の検索（履歴）</h3>
+          <div class="list" id="historyList"></div>
+          <div class="sub"><button class="tiny del" id="clearHistory">履歴をクリア</button></div>
+        </div>
+        <div>
+          <h3 style="margin:0 0 8px 0;">⭐ お気に入り</h3>
+          <div class="list" id="favList"></div>
+          <div class="sub">
+            <button class="tiny star" id="favBtn">★ 入力中をお気に入り</button>
+            <button class="tiny del" id="exportFav">お気に入りをコピー</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <footer>
+      <p>※本サイトは公式データを直接保持せず、各社公式の検索ページへのリンクのみを提供します。<br>
+      DAM / JOYSOUNDの名称・ロゴは各社の商標です。</p>
+    </footer>
+  </div>
 
   <script>
-    const btn = document.getElementById("searchBtn");
-    const songInput = document.getElementById("song");
-    const result = document.getElementById("result");
+    // ====== 設定 ======
+    const MAX_HISTORY = 10;
 
-    btn.addEventListener("click", () => {
-      const q = songInput.value.trim();
-      if (!q) {
-        result.innerHTML = "<p class='warn'>⚠️ 曲名を入力してください。</p>";
+    // ====== 要素 ======
+    const input = document.getElementById('song');
+    const linksArea = document.getElementById('linksArea');
+    const historyList = document.getElementById('historyList');
+    const favList = document.getElementById('favList');
+    const goBtn = document.getElementById('goBtn');
+    const favBtn = document.getElementById('favBtn');
+    const clearHistoryBtn = document.getElementById('clearHistory');
+    const exportFavBtn = document.getElementById('exportFav');
+    const shareBtn = document.getElementById('shareBtn');
+    const tileDam = document.getElementById('tileDam');
+    const tileJoy = document.getElementById('tileJoy');
+
+    // ====== ストレージ ======
+    const getLS = (k, d=[]) => { try { return JSON.parse(localStorage.getItem(k)) ?? d; } catch { return d; } };
+    const setLS = (k, v) => localStorage.setItem(k, JSON.stringify(v));
+
+    // ====== クエリをロゴリンクに反映 ======
+    function updateBrandLinks(q){
+      const e = encodeURIComponent(q.trim());
+      tileDam.href = `https://www.clubdam.com/karaokesearch/?keyword=${e}`;
+      tileJoy.href = `https://www.joysound.com/web/search?keyword=${e}`;
+    }
+
+    // ====== リンク生成（テキスト補助） ======
+    function buildLinks(q){
+      const e = encodeURIComponent(q.trim());
+      return [
+        { name:'DAM（公式検索）', url:`https://www.clubdam.com/karaokesearch/?keyword=${e}`, note:'本人映像・配信状況は検索後の画面で確認' },
+        { name:'JOYSOUND（公式検索）', url:`https://www.joysound.com/web/search?keyword=${e}`, note:'機種・映像の有無は結果詳細へ' },
+      ];
+    }
+
+    function renderLinks(q){
+      linksArea.innerHTML = '';
+      if(!q.trim()){
+        linksArea.innerHTML = `<div class="linkcard"><div class="muted">曲名を入力してください。</div></div>`;
         return;
       }
+      const links = buildLinks(q);
+      links.forEach(l=>{
+        const div = document.createElement('div');
+        div.className = 'linkcard';
+        div.innerHTML = `<h3>${l.name}</h3>
+          <a href="${l.url}" target="_blank" rel="noopener">▶ 公式で検索する</a>
+          <p class="muted">${l.note}</p>`;
+        linksArea.appendChild(div);
+      });
+    }
 
-      result.innerHTML = `
-        <div class="result-card slide-up">
-          <h2>検索結果：${q}</h2>
-          <a href="https://www.clubdam.com/karaokesearch/song/?keyword=${encodeURIComponent(q)}" target="_blank" class="dam">🎯 DAMで検索</a>
-          <a href="https://www.joysound.com/web/search/song/${encodeURIComponent(q)}" target="_blank" class="joy">🎯 JOYSOUNDで検索</a>
-        </div>`;
-    });
+    // ====== 履歴 / お気に入り ======
+    function addHistory(q){
+      let hist = getLS('history');
+      hist = [q, ...hist.filter(x=>x!==q)].slice(0, MAX_HISTORY);
+      setLS('history', hist); renderHistory();
+    }
+    function renderHistory(){
+      const hist = getLS('history');
+      historyList.innerHTML = '';
+      if(hist.length===0){ historyList.innerHTML = `<div class="muted">まだ履歴はありません。</div>`; return; }
+      hist.forEach(q=>{
+        const row = document.createElement('div');
+        row.className='pill';
+        row.innerHTML = `<div><strong>${q}</strong><br><small>クリックで検索リンク生成</small></div>
+          <div class="row2">
+            <button class="tiny star" title="お気に入りへ追加">★</button>
+            <button class="tiny del" title="この履歴を削除">×</button>
+          </div>`;
+        row.onclick = (e)=>{ if(e.target.tagName==='BUTTON') return; input.value=q; updateBrandLinks(q); renderLinks(q); };
+        row.querySelector('.star').onclick = ()=> addFavorite(q);
+        row.querySelector('.del').onclick = ()=> removeHistory(q);
+        historyList.appendChild(row);
+      });
+    }
+    function removeHistory(q){
+      let hist = getLS('history');
+      hist = hist.filter(x=>x!==q);
+      setLS('history', hist); renderHistory();
+    }
+    function addFavorite(q){
+      let fav = getLS('fav');
+      if(!fav.includes(q)){ fav.unshift(q); setLS('fav', fav); renderFav(); }
+    }
+    function removeFavorite(q){
+      let fav = getLS('fav');
+      fav = fav.filter(x=>x!==q);
+      setLS('fav', fav); renderFav();
+    }
+    function renderFav(){
+      const fav = getLS('fav');
+      favList.innerHTML = '';
+      if(fav.length===0){ favList.innerHTML = `<div class="muted">お気に入りはまだありません。</div>`; return; }
+      fav.forEach(q=>{
+        const row = document.createElement('div');
+        row.className='pill';
+        row.innerHTML = `<div><strong>${q}</strong><br><small>クリックで検索リンク生成</small></div>
+          <div class="row2">
+            <button class="tiny del" title="お気に入りから外す">×</button>
+          </div>`;
+        row.onclick = (e)=>{ if(e.target.tagName==='BUTTON') return; input.value=q; updateBrandLinks(q); renderLinks(q); };
+        row.querySelector('.del').onclick = ()=> removeFavorite(q);
+        favList.appendChild(row);
+      });
+    }
 
-    songInput.addEventListener("keydown", e => {
-      if (e.key === "Enter") btn.click();
-    });
+    // ====== ハンドラ ======
+    function runSearch(){
+      const q = input.value.trim();
+      if(!q){ input.focus(); return; }
+      updateBrandLinks(q);
+      renderLinks(q);
+      addHistory(q);
+    }
+    document.getElementById('goBtn').onclick = runSearch;
+    document.getElementById('clearHistory').onclick = ()=>{ localStorage.removeItem('history'); renderHistory(); };
+    document.getElementById('exportFav').onclick = ()=>{
+      const fav = getLS('fav'); const text = fav.join('\n');
+      if(navigator.clipboard){ navigator.clipboard.writeText(text); alert('お気に入りをコピーしました！'); }
+      else { prompt('下のテキストをコピーしてね：', text); }
+    };
+    document.getElementById('shareBtn').onclick = async ()=>{
+      const url = location.href;
+      if(navigator.share){ try { await navigator.share({title:'カラオケ配信チェッカー', url}); } catch{} }
+      else { await navigator.clipboard.writeText(url); alert('URLをコピーしました！'); }
+    };
+    document.getElementById('song').addEventListener('input', e=> updateBrandLinks(e.target.value));
+    document.getElementById('song').addEventListener('keydown', e=>{ if(e.key==='Enter') runSearch(); });
+    document.getElementById('favBtn').onclick = ()=>{ const q=input.value.trim(); if(q) addFavorite(q); };
+
+    // 初期表示
+    updateBrandLinks('');
+    renderLinks('');
+    renderHistory();
+    renderFav();
   </script>
 </body>
 </html>
