@@ -1,81 +1,161 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+
 body {
   margin: 0;
-  font-family: "Segoe UI", "Hiragino Kaku Gothic ProN", sans-serif;
-  background: linear-gradient(-45deg, #0f2027, #203a43, #2c5364, #16222a);
-  background-size: 400% 400%;
-  animation: gradientShift 10s ease infinite;
-  color: #fff;
-  text-align: center;
+  overflow-x: hidden;
+  font-family: 'Poppins', 'Hiragino Kaku Gothic ProN', sans-serif;
+  color: #e8f0ff;
   height: 100vh;
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
+  background: radial-gradient(circle at 50% 30%, #0a1837 0%, #040b18 100%);
 }
 
-.wrap {
-  padding: 40px;
-  border-radius: 20px;
-  background: rgba(0, 0, 0, 0.3);
-  backdrop-filter: blur(10px);
-  box-shadow: 0 0 20px rgba(255,255,255,0.1);
+/* ✨ 星が流れる背景 */
+.stars, .twinkling {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  display: block;
+  z-index: -2;
+}
+
+.stars {
+  background: url('https://www.transparenttextures.com/patterns/stardust.png');
+  animation: moveStars 200s linear infinite;
+}
+
+.twinkling {
+  background: url('https://www.transparenttextures.com/patterns/dark-mosaic.png');
+  animation: moveTwinkling 100s linear infinite;
+  opacity: 0.2;
+}
+
+@keyframes moveStars {
+  from { background-position: 0 0; }
+  to { background-position: -10000px 5000px; }
+}
+@keyframes moveTwinkling {
+  from { background-position: 0 0; }
+  to { background-position: 10000px -5000px; }
+}
+
+/* 🌟 タイトルアニメ */
+.glow-title {
+  font-size: 2.2rem;
+  font-weight: 700;
+  color: #fff;
+  text-shadow: 0 0 10px #4ecbff, 0 0 20px #00bfff;
+  animation: popIn 1.5s ease;
+}
+@keyframes popIn {
+  from { opacity: 0; transform: scale(0.8); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+.subtitle {
+  margin-top: 4px;
+  opacity: 0.8;
+  font-size: 0.95rem;
+}
+
+/* 💎 検索カード */
+.search-card {
+  margin-top: 20px;
+  display: flex;
+  gap: 10px;
+  padding: 20px;
+  border-radius: 18px;
+  backdrop-filter: blur(15px);
+  background: rgba(255,255,255,0.08);
+  box-shadow: 0 0 20px rgba(0,0,0,0.5);
+  animation: fadeIn 1.2s ease;
 }
 
 input {
-  padding: 10px 20px;
-  font-size: 16px;
-  border-radius: 8px;
+  flex: 1;
+  padding: 12px 18px;
+  border-radius: 10px;
   border: none;
   outline: none;
+  font-size: 16px;
+  background: rgba(255,255,255,0.15);
+  color: #fff;
+  backdrop-filter: blur(5px);
 }
 
 button {
-  margin-left: 10px;
-  padding: 10px 25px;
-  font-size: 16px;
-  border: none;
-  border-radius: 8px;
+  background: linear-gradient(90deg, #00bfff, #0078ff);
   color: #fff;
-  background: linear-gradient(90deg, #6a11cb, #2575fc);
+  font-weight: 600;
+  border: none;
+  border-radius: 10px;
+  padding: 12px 24px;
   cursor: pointer;
   position: relative;
   overflow: hidden;
+  transition: all 0.2s ease;
 }
 
-button.pulse:hover {
-  animation: pulse 1s infinite;
+button:hover {
+  box-shadow: 0 0 20px #00bfff, 0 0 40px #0078ff;
+  transform: translateY(-1px);
 }
 
-#result {
-  margin-top: 20px;
-  opacity: 0;
-  transform: translateY(20px);
-  transition: all 0.6s ease;
+button:active::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 10px;
+  height: 10px;
+  background: rgba(255,255,255,0.3);
+  border-radius: 50%;
+  transform: translate(-50%, -50%) scale(0);
+  animation: ripple 0.6s linear;
+}
+@keyframes ripple {
+  to { transform: translate(-50%, -50%) scale(15); opacity: 0; }
 }
 
-#result.show {
-  opacity: 1;
-  transform: translateY(0);
+/* 🎬 結果表示 */
+.result-card {
+  margin-top: 25px;
+  padding: 20px;
+  border-radius: 15px;
+  background: rgba(0,0,0,0.5);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 0 20px rgba(0,191,255,0.3);
+  animation: slideUp 0.8s ease;
 }
+.result-card a {
+  display: inline-block;
+  margin: 10px 10px 0 0;
+  padding: 10px 20px;
+  border-radius: 8px;
+  text-decoration: none;
+  color: #fff;
+  font-weight: 600;
+  transition: 0.3s;
+}
+.result-card a.dam { background: #ff4e4e; }
+.result-card a.joy { background: #4e9fff; }
+.result-card a:hover { opacity: 0.8; }
 
-/* ✨ 背景グラデーションの動き */
-@keyframes gradientShift {
-  0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
-}
+.warn { color: #ff8080; }
 
-/* 💫 フェードイン */
-.fade-in {
-  animation: fadeIn 2s ease;
-}
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(20px); }
   to { opacity: 1; transform: translateY(0); }
 }
 
-/* 💥 ボタン波紋 */
-@keyframes pulse {
-  0% { box-shadow: 0 0 0 0 rgba(37,117,252,0.4); }
-  70% { box-shadow: 0 0 0 10px rgba(37,117,252,0); }
-  100% { box-shadow: 0 0 0 0 rgba(37,117,252,0); }
+footer {
+  position: fixed;
+  bottom: 10px;
+  color: #7da8ff;
+  font-size: 0.8rem;
+  text-shadow: 0 0 8px #0040ff;
+  opacity: 0.7;
 }
