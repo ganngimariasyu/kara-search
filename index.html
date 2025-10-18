@@ -3,36 +3,51 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>カラオケ配信チェック</title>
+  <title>🎤 カラオケ配信チェッカー</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <div class="wrap fade-in">
-    <h1>🎤 カラオケ配信チェック</h1>
-    <p>調べたい曲名を入力してください</p>
-    <div class="search-area">
-      <input type="text" id="song" placeholder="曲名を入力" />
-      <button id="searchBtn" class="pulse">検索</button>
+  <div class="stars"></div>
+  <div class="twinkling"></div>
+
+  <main class="container fade-in">
+    <h1 class="glow-title">🎵 カラオケ配信チェッカー</h1>
+    <p class="subtitle">曲名を入力して各機種の配信状況をチェック！</p>
+
+    <div class="search-card">
+      <input type="text" id="song" placeholder="例：夜に駆ける / 残酷な天使のテーゼ" />
+      <button id="searchBtn">検索</button>
     </div>
-    <div id="result" class="slide-up"></div>
-  </div>
+
+    <div id="result" class="result-area"></div>
+  </main>
+
+  <footer>
+    <p>© 2025 Kara-Search | 非公式ファン制作ツール</p>
+  </footer>
 
   <script>
-    document.getElementById("searchBtn").addEventListener("click", () => {
-      const song = document.getElementById("song").value.trim();
-      const result = document.getElementById("result");
-      if (!song) {
-        result.innerHTML = "⚠️ 曲名を入力してください。";
+    const btn = document.getElementById("searchBtn");
+    const songInput = document.getElementById("song");
+    const result = document.getElementById("result");
+
+    btn.addEventListener("click", () => {
+      const q = songInput.value.trim();
+      if (!q) {
+        result.innerHTML = "<p class='warn'>⚠️ 曲名を入力してください。</p>";
         return;
       }
+
       result.innerHTML = `
-        <p>🔍「${song}」の検索結果リンク:</p>
-        <ul>
-          <li><a href="https://www.clubdam.com/karaokesearch/song/?keyword=${encodeURIComponent(song)}" target="_blank">DAMで検索</a></li>
-          <li><a href="https://www.joysound.com/web/search/song/${encodeURIComponent(song)}" target="_blank">JOYSOUNDで検索</a></li>
-        </ul>
-      `;
-      result.classList.add("show");
+        <div class="result-card slide-up">
+          <h2>検索結果：${q}</h2>
+          <a href="https://www.clubdam.com/karaokesearch/song/?keyword=${encodeURIComponent(q)}" target="_blank" class="dam">🎯 DAMで検索</a>
+          <a href="https://www.joysound.com/web/search/song/${encodeURIComponent(q)}" target="_blank" class="joy">🎯 JOYSOUNDで検索</a>
+        </div>`;
+    });
+
+    songInput.addEventListener("keydown", e => {
+      if (e.key === "Enter") btn.click();
     });
   </script>
 </body>
