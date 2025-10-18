@@ -1,161 +1,74 @@
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
-
-body {
-  margin: 0;
-  overflow-x: hidden;
-  font-family: 'Poppins', 'Hiragino Kaku Gothic ProN', sans-serif;
-  color: #e8f0ff;
-  height: 100vh;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  background: radial-gradient(circle at 50% 30%, #0a1837 0%, #040b18 100%);
+:root{
+  --bg:#0b1020; --card:#131a2d; --muted:#8aa0c6; --txt:#e8eeff; --accent:#6ea8ff; --accent2:#a6ffb1;
+  --glow: 0 10px 30px rgba(0, 128, 255, .20), inset 0 0 0 1px rgba(110,168,255,.15);
 }
 
-/* ✨ 星が流れる背景 */
-.stars, .twinkling {
-  position: fixed;
-  top: 0; left: 0;
-  width: 100%; height: 100%;
-  display: block;
-  z-index: -2;
+*{box-sizing:border-box}
+html,body{
+  margin:0;
+  background:radial-gradient(1000px 500px at 10% -10%,#12214a,#0b1020 50%),linear-gradient(180deg,#0b1020 0%,#0f1530 100%);
+  color:var(--txt);
+  font-family:system-ui,-apple-system,Segoe UI,Roboto,"Hiragino Kaku Gothic ProN","Noto Sans JP",sans-serif
 }
+.wrap{max-width:980px;margin:0 auto;padding:28px 16px 80px}
 
-.stars {
-  background: url('https://www.transparenttextures.com/patterns/stardust.png');
-  animation: moveStars 200s linear infinite;
-}
+/* header */
+header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:16px}
+.logo{display:flex;align-items:center;gap:10px}
+.logo .dot{width:10px;height:10px;border-radius:50%;background:radial-gradient(circle,var(--accent) 0%,#2b61ff 60%,transparent 70%);box-shadow:0 0 12px #6ea8ff}
+h1{font-size:22px;margin:0;font-weight:800;letter-spacing:.3px}
+.tiny{padding:8px 10px;border-radius:10px;font-size:12px;cursor:pointer;border:1px solid rgba(110,168,255,.35);background:transparent;color:var(--txt)}
 
-.twinkling {
-  background: url('https://www.transparenttextures.com/patterns/dark-mosaic.png');
-  animation: moveTwinkling 100s linear infinite;
-  opacity: 0.2;
-}
+/* cards */
+.card{background:rgba(19,26,45,.72);backdrop-filter:blur(6px);border:1px solid rgba(110,168,255,.15);border-radius:18px;box-shadow:var(--glow)}
+.search{padding:18px}
 
-@keyframes moveStars {
-  from { background-position: 0 0; }
-  to { background-position: -10000px 5000px; }
-}
-@keyframes moveTwinkling {
-  from { background-position: 0 0; }
-  to { background-position: 10000px -5000px; }
-}
+/* search row */
+.row{display:flex;gap:10px}
+input[type="text"]{flex:1;background:#0f1530;color:var(--txt);border:1px solid rgba(110,168,255,.3);border-radius:12px;padding:14px 16px;font-size:16px;outline:none}
+input::placeholder{color:#90a2c9}
+.btn{cursor:pointer;border:none;border-radius:12px;padding:14px 16px;font-weight:700;color:#0a1025;background:linear-gradient(180deg,#88b5ff,#6ea8ff);box-shadow:0 6px 16px rgba(110,168,255,.35);transition:transform .04s ease,opacity .2s}
+.btn:active{transform:translateY(1px)}
+.sub{display:flex;gap:10px;margin-top:10px}
 
-/* 🌟 タイトルアニメ */
-.glow-title {
-  font-size: 2.2rem;
-  font-weight: 700;
-  color: #fff;
-  text-shadow: 0 0 10px #4ecbff, 0 0 20px #00bfff;
-  animation: popIn 1.5s ease;
-}
-@keyframes popIn {
-  from { opacity: 0; transform: scale(0.8); }
-  to { opacity: 1; transform: scale(1); }
-}
+/* brand tiles (ロゴで直感ジャンプ) */
+.brands{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-top:14px}
+.tile{display:flex;align-items:center;gap:14px;padding:14px;border-radius:14px;background:#0f1530;border:1px solid rgba(110,168,255,.18);transition:transform .08s ease, box-shadow .25s ease, border-color .25s ease}
+.tile:hover{transform:translateY(-1px) scale(1.01);box-shadow:0 10px 26px rgba(0,0,0,.38);border-color:rgba(110,168,255,.35)}
+.tile img{width:120px;max-height:42px;object-fit:contain;filter:drop-shadow(0 0 12px rgba(110,168,255,.15))}
+.tile .meta{flex:1}
+.tile .meta .ttl{font-weight:700;font-size:15px;margin:0 0 4px}
+.tile .meta .desc{color:var(--muted);font-size:12px;margin:0}
+.tile .go{white-space:nowrap}
+.tile .go a,.tile .go .btn{display:inline-block;padding:10px 12px;border-radius:10px;background:linear-gradient(180deg,#b9ffc2,#7bff96);color:#042;font-weight:800;text-decoration:none}
 
-.subtitle {
-  margin-top: 4px;
-  opacity: 0.8;
-  font-size: 0.95rem;
-}
+/* linkcards (テキスト補助) */
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;padding:16px}
+.linkcard{padding:16px;border-radius:14px;border:1px solid rgba(110,168,255,.18);background:#0f1530}
+.linkcard h3{margin:0 0 8px 0;font-size:15px;color:#cfe1ff}
+.linkcard a{color:var(--accent);word-break:break-all}
+.muted{color:var(--muted);font-size:13px}
 
-/* 💎 検索カード */
-.search-card {
-  margin-top: 20px;
-  display: flex;
-  gap: 10px;
-  padding: 20px;
-  border-radius: 18px;
-  backdrop-filter: blur(15px);
-  background: rgba(255,255,255,0.08);
-  box-shadow: 0 0 20px rgba(0,0,0,0.5);
-  animation: fadeIn 1.2s ease;
-}
+/* history / fav */
+.panel{margin-top:16px;padding:14px 16px;border-top:1px dashed rgba(110,168,255,.25)}
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.list{display:flex;flex-direction:column;gap:8px;max-height:300px;overflow:auto}
+.pill{display:flex;align-items:center;justify-content:space-between;gap:10px;background:#0f1530;border:1px solid rgba(110,168,255,.18);border-radius:12px;padding:10px 12px}
+.pill small{color:#b9c9ef}
+.row2{display:flex;gap:6px}
+.del{background:transparent;border:1px solid rgba(110,168,255,.3);color:#cfe1ff}
+.star{background:linear-gradient(180deg,#b9ffc2,#7bff96)}
+footer{margin-top:18px;color:#8aa0c6;font-size:12px;text-align:center}
+.ok{color:var(--accent2)}
 
-input {
-  flex: 1;
-  padding: 12px 18px;
-  border-radius: 10px;
-  border: none;
-  outline: none;
-  font-size: 16px;
-  background: rgba(255,255,255,0.15);
-  color: #fff;
-  backdrop-filter: blur(5px);
-}
+/* intro motion */
+.fadein{animation:fadeIn .6s ease both}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
 
-button {
-  background: linear-gradient(90deg, #00bfff, #0078ff);
-  color: #fff;
-  font-weight: 600;
-  border: none;
-  border-radius: 10px;
-  padding: 12px 24px;
-  cursor: pointer;
-  position: relative;
-  overflow: hidden;
-  transition: all 0.2s ease;
-}
-
-button:hover {
-  box-shadow: 0 0 20px #00bfff, 0 0 40px #0078ff;
-  transform: translateY(-1px);
-}
-
-button:active::after {
-  content: "";
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  width: 10px;
-  height: 10px;
-  background: rgba(255,255,255,0.3);
-  border-radius: 50%;
-  transform: translate(-50%, -50%) scale(0);
-  animation: ripple 0.6s linear;
-}
-@keyframes ripple {
-  to { transform: translate(-50%, -50%) scale(15); opacity: 0; }
-}
-
-/* 🎬 結果表示 */
-.result-card {
-  margin-top: 25px;
-  padding: 20px;
-  border-radius: 15px;
-  background: rgba(0,0,0,0.5);
-  backdrop-filter: blur(10px);
-  box-shadow: 0 0 20px rgba(0,191,255,0.3);
-  animation: slideUp 0.8s ease;
-}
-.result-card a {
-  display: inline-block;
-  margin: 10px 10px 0 0;
-  padding: 10px 20px;
-  border-radius: 8px;
-  text-decoration: none;
-  color: #fff;
-  font-weight: 600;
-  transition: 0.3s;
-}
-.result-card a.dam { background: #ff4e4e; }
-.result-card a.joy { background: #4e9fff; }
-.result-card a:hover { opacity: 0.8; }
-
-.warn { color: #ff8080; }
-
-@keyframes slideUp {
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-footer {
-  position: fixed;
-  bottom: 10px;
-  color: #7da8ff;
-  font-size: 0.8rem;
-  text-shadow: 0 0 8px #0040ff;
-  opacity: 0.7;
+/* responsive */
+@media (max-width:780px){
+  .brands{grid-template-columns:1fr}
+  .grid{grid-template-columns:1fr}
+  .row{flex-direction:column}
+  .tile img{width:110px}
 }
