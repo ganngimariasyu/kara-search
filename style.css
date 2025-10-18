@@ -3,72 +3,125 @@
   --glow: 0 10px 30px rgba(0, 128, 255, .20), inset 0 0 0 1px rgba(110,168,255,.15);
 }
 
+/* ベース */
 *{box-sizing:border-box}
 html,body{
   margin:0;
-  background:radial-gradient(1000px 500px at 10% -10%,#12214a,#0b1020 50%),linear-gradient(180deg,#0b1020 0%,#0f1530 100%);
+  background:radial-gradient(1000px 500px at 10% -10%,#12214a,#0b1020 50%),
+             linear-gradient(180deg,#0b1020 0%,#0f1530 100%);
   color:var(--txt);
-  font-family:system-ui,-apple-system,Segoe UI,Roboto,"Hiragino Kaku Gothic ProN","Noto Sans JP",sans-serif
+  font-family:system-ui,-apple-system,Segoe UI,Roboto,"Hiragino Kaku Gothic ProN","Noto Sans JP",sans-serif;
 }
 .wrap{max-width:980px;margin:0 auto;padding:28px 16px 80px}
 
-/* header */
+/* 背景レイヤー */
+.stars, .twinkling, .glow-spot{ position:fixed; inset:0; pointer-events:none; z-index:-3; }
+.stars{
+  background:url('https://www.transparenttextures.com/patterns/stardust.png');
+  opacity:.25; animation:moveStars 200s linear infinite;
+}
+.twinkling{
+  background:url('https://www.transparenttextures.com/patterns/dark-mosaic.png');
+  opacity:.15; animation:moveTwinkling 120s linear infinite;
+}
+.glow-spot{
+  z-index:-2;
+  background:
+    radial-gradient(600px 300px at 20% 0%, rgba(110,168,255,.20), transparent 60%),
+    radial-gradient(500px 260px at 80% 20%, rgba(166,255,177,.15), transparent 60%);
+  filter:blur(2px);
+}
+@keyframes moveStars{ from{background-position:0 0} to{background-position:-8000px 4000px} }
+@keyframes moveTwinkling{ from{background-position:0 0} to{background-position:8000px -4000px} }
+
+/* ヘッダー */
 header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:16px}
 .logo{display:flex;align-items:center;gap:10px}
 .logo .dot{width:10px;height:10px;border-radius:50%;background:radial-gradient(circle,var(--accent) 0%,#2b61ff 60%,transparent 70%);box-shadow:0 0 12px #6ea8ff}
 h1{font-size:22px;margin:0;font-weight:800;letter-spacing:.3px}
+.glow-title{
+  font-weight:900; letter-spacing:.06em;
+  text-shadow:0 0 10px rgba(110,168,255,.9), 0 0 20px rgba(110,168,255,.6), 0 0 40px rgba(110,168,255,.35);
+  animation:titlePop .8s ease both;
+}
+@keyframes titlePop{ from{opacity:0; transform:translateY(6px) scale(.98)} to{opacity:1; transform:none} }
 .tiny{padding:8px 10px;border-radius:10px;font-size:12px;cursor:pointer;border:1px solid rgba(110,168,255,.35);background:transparent;color:var(--txt)}
 
-/* cards */
+/* カード */
 .card{background:rgba(19,26,45,.72);backdrop-filter:blur(6px);border:1px solid rgba(110,168,255,.15);border-radius:18px;box-shadow:var(--glow)}
 .search{padding:18px}
 
-/* search row */
+/* 検索行 */
 .row{display:flex;gap:10px}
 input[type="text"]{flex:1;background:#0f1530;color:var(--txt);border:1px solid rgba(110,168,255,.3);border-radius:12px;padding:14px 16px;font-size:16px;outline:none}
 input::placeholder{color:#90a2c9}
-.btn{cursor:pointer;border:none;border-radius:12px;padding:14px 16px;font-weight:700;color:#0a1025;background:linear-gradient(180deg,#88b5ff,#6ea8ff);box-shadow:0 6px 16px rgba(110,168,255,.35);transition:transform .04s ease,opacity .2s}
-.btn:active{transform:translateY(1px)}
-.sub{display:flex;gap:10px;margin-top:10px}
+input[type="text"]:focus{ box-shadow:0 0 0 3px rgba(110,168,255,.25); border-color:rgba(110,168,255,.55); }
+.btn{
+  cursor:pointer;border:none;border-radius:12px;padding:14px 16px;font-weight:700;color:#0a1025;
+  background:linear-gradient(180deg,#88b5ff,#6ea8ff); box-shadow:0 6px 16px rgba(110,168,255,.35);
+  transition:transform .04s ease,opacity .2s; position:relative; overflow:hidden;
+}
+.btn:active{ transform:translateY(1px) }
+.btn:hover{ box-shadow:0 0 20px rgba(110,168,255,.45), 0 6px 16px rgba(110,168,255,.35) }
+.btn:active::after{
+  content:""; position:absolute; left:50%; top:50%; width:10px; height:10px; background:rgba(255,255,255,.35);
+  border-radius:50%; transform:translate(-50%,-50%) scale(0); animation:ripple .5s ease;
+}
+@keyframes ripple{ to{ transform:translate(-50%,-50%) scale(16); opacity:0 } }
 
-/* brand tiles (ロゴで直感ジャンプ) */
+.sub{display:flex;gap:10px;margin-top:10px}
+.muted{color:var(--muted);font-size:13px}
+.note{margin-top:10px}
+
+/* ロゴタイル */
 .brands{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-top:14px}
-.tile{display:flex;align-items:center;gap:14px;padding:14px;border-radius:14px;background:#0f1530;border:1px solid rgba(110,168,255,.18);transition:transform .08s ease, box-shadow .25s ease, border-color .25s ease}
-.tile:hover{transform:translateY(-1px) scale(1.01);box-shadow:0 10px 26px rgba(0,0,0,.38);border-color:rgba(110,168,255,.35)}
-.tile img{width:120px;max-height:42px;object-fit:contain;filter:drop-shadow(0 0 12px rgba(110,168,255,.15))}
+.tile{
+  display:flex;align-items:center;gap:14px;padding:14px;border-radius:14px;
+  background:linear-gradient(180deg, rgba(15,21,48,.95), rgba(15,21,48,.85));
+  border:1px solid rgba(110,168,255,.18);
+  transition:transform .08s ease, box-shadow .25s ease, border-color .25s ease;
+}
+.tile:hover{
+  transform:translateY(-2px) scale(1.01);
+  box-shadow:0 12px 28px rgba(0,0,0,.45), 0 0 0 1px rgba(110,168,255,.35), 0 0 24px rgba(110,168,255,.25);
+}
+.tile img{width:120px;max-height:42px;object-fit:contain;filter:drop-shadow(0 0 12px rgba(110,168,255,.15)); transition:transform .25s ease;}
+.tile:hover img{ transform:translateY(-1px) }
 .tile .meta{flex:1}
 .tile .meta .ttl{font-weight:700;font-size:15px;margin:0 0 4px}
 .tile .meta .desc{color:var(--muted);font-size:12px;margin:0}
 .tile .go{white-space:nowrap}
-.tile .go a,.tile .go .btn{display:inline-block;padding:10px 12px;border-radius:10px;background:linear-gradient(180deg,#b9ffc2,#7bff96);color:#042;font-weight:800;text-decoration:none}
+.tile .go .btn{ padding:10px 12px; }
 
-/* linkcards (テキスト補助) */
+/* テキストリンクカード */
 .grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;padding:16px}
 .linkcard{padding:16px;border-radius:14px;border:1px solid rgba(110,168,255,.18);background:#0f1530}
 .linkcard h3{margin:0 0 8px 0;font-size:15px;color:#cfe1ff}
 .linkcard a{color:var(--accent);word-break:break-all}
-.muted{color:var(--muted);font-size:13px}
 
-/* history / fav */
+/* 履歴／お気に入り */
 .panel{margin-top:16px;padding:14px 16px;border-top:1px dashed rgba(110,168,255,.25)}
 .cols{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.panel-ttl{margin:0 0 8px 0}
 .list{display:flex;flex-direction:column;gap:8px;max-height:300px;overflow:auto}
 .pill{display:flex;align-items:center;justify-content:space-between;gap:10px;background:#0f1530;border:1px solid rgba(110,168,255,.18);border-radius:12px;padding:10px 12px}
 .pill small{color:#b9c9ef}
 .row2{display:flex;gap:6px}
-.del{background:transparent;border:1px solid rgba(110,168,255,.3);color:#cfe1ff}
+.btn-ghost{background:transparent;border:1px solid rgba(110,168,255,.35);color:var(--txt)}
 .star{background:linear-gradient(180deg,#b9ffc2,#7bff96)}
+.del{background:transparent;border:1px solid rgba(110,168,255,.3);color:#cfe1ff}
+
 footer{margin-top:18px;color:#8aa0c6;font-size:12px;text-align:center}
 .ok{color:var(--accent2)}
 
-/* intro motion */
 .fadein{animation:fadeIn .6s ease both}
-@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+@keyframes fadeIn{ from{opacity:0; transform:translateY(6px)} to{opacity:1; transform:none} }
 
-/* responsive */
+/* レスポンシブ */
 @media (max-width:780px){
   .brands{grid-template-columns:1fr}
   .grid{grid-template-columns:1fr}
   .row{flex-direction:column}
   .tile img{width:110px}
+  .card{ box-shadow: 0 8px 20px rgba(0,0,0,.45), 0 0 0 1px rgba(110,168,255,.12) }
 }
