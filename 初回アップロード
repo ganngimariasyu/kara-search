@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>カラオケ配信チェック</title>
+  <style>
+    body { font-family: 'Arial'; text-align: center; padding: 50px; }
+    input { padding: 10px; width: 60%; font-size: 16px; }
+    button { padding: 10px 20px; font-size: 16px; margin-left: 5px; }
+    .result { margin-top: 40px; font-size: 18px; }
+  </style>
+</head>
+<body>
+  <h1>🎤 カラオケ配信チェック</h1>
+  <p>調べたい曲名を入力してね</p>
+
+  <input type="text" id="song" placeholder="曲名を入力" />
+  <button onclick="search()">検索</button>
+
+  <div class="result" id="result"></div>
+
+  <script>
+    function search() {
+      const song = encodeURIComponent(document.getElementById("song").value);
+      if (!song) {
+        document.getElementById("result").innerHTML = "曲名を入力してね。";
+        return;
+      }
+      const dam = `https://www.clubdam.com/karaokesearch/?keyword=${song}`;
+      const joy = `https://www.joysound.com/web/search/song/${song}`;
+      document.getElementById("result").innerHTML = `
+        <p><a href="${dam}" target="_blank">🎯 DAMで検索する</a></p>
+        <p><a href="${joy}" target="_blank">🎯 JOYSOUNDで検索する</a></p>
+      `;
+    }
+  </script>
+</body>
+</html>
